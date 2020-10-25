@@ -2,3 +2,4 @@ __pycache__/
 *.webm
 *.gif
 files/
+*.pyc
