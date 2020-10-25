@@ -41,10 +41,14 @@ def messageReceiver(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('An error occured')
 
 
-updater = Updater('635156026:AAElQGaPkRKafynTGQh9kMjKj0tYoojdQs4')
+token = os.environ['TELEGRAM_API_TOKEN']
+if token:
+    updater = Updater(token, use_context=True)
 
     updater.dispatcher.add_handler(
         MessageHandler(filters=Filters.all, callback=messageReceiver))
 
     updater.start_polling()
     updater.idle()
+else:
+    print('No TELEGRAM_API_TOKEN env variable')
