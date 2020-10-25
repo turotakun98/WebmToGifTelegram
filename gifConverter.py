@@ -17,31 +17,34 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 
 def messageReceiver(update: Update, context: CallbackContext) -> None:
-    if re.match(urlPattern, update.message.text) is not None:
-        filename = id_generator(6)
-        while(os.path.isfile(filename)):
+    try:
+        if re.match(urlPattern, update.message.text) is not None:
             filename = id_generator(6)
+            while(os.path.isfile(filename)):
+                filename = id_generator(6)
 
-        opener = urllib.request.URLopener()
-        opener.addheader('User-Agent', 'whatever')
-        opener.retrieve(
-            update.message.text, '/home/turotakun98/repo/gifConvertTG/{0}{1}.webm'.format(basePath, filename))
-        msgLoading = update.message.reply_text('loading ...')
-        os.system(
-            'ffmpeg -i {baseDir}{filename}.webm -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 {baseDir}{filename}.gif'.format(baseDir=basePath, filename=filename))
+            opener = urllib.request.URLopener()
+            opener.addheader('User-Agent', 'whatever')
+            opener.retrieve(
+                update.message.text, '{0}{1}.webm'.format(basePath, filename))
+            msgLoading = update.message.reply_text('loading ...')
+            os.system(
+                'ffmpeg -i {baseDir}{filename}.webm -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 {baseDir}{filename}.gif'.format(baseDir=basePath, filename=filename))
 
-        update.message.reply_animation(
-            animation=open(('{0}{1}.gif'.format(basePath, filename)), 'rb'))
-        msgLoading.delete()
+            update.message.reply_animation(
+                animation=open(('{0}{1}.gif'.format(basePath, filename)), 'rb'))
+            msgLoading.delete()
 
-    else:
-        update.message.reply_text('Invalid url')
+        else:
+            update.message.reply_text('Invalid url')
+    except:
+        update.message.reply_text('An error occured')
 
 
 updater = Updater('635156026:AAElQGaPkRKafynTGQh9kMjKj0tYoojdQs4')
 
-updater.dispatcher.add_handler(
-    MessageHandler(filters=Filters.all, callback=messageReceiver))
+    updater.dispatcher.add_handler(
+        MessageHandler(filters=Filters.all, callback=messageReceiver))
 
-updater.start_polling()
-updater.idle()
+    updater.start_polling()
+    updater.idle()
