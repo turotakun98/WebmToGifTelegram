@@ -7,6 +7,7 @@ import os
 import string
 import random
 import codecs
+import json
 
 urlPattern = '^(http://www.|https://www.|http://|https://)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$'
 basePath = 'files/'
@@ -35,13 +36,17 @@ def messageReceiver(update: Update, context: CallbackContext) -> None:
                 animation=open(('{0}{1}.gif'.format(basePath, filename)), 'rb'))
             msgLoading.delete()
 
-        else:
-            update.message.reply_text('Invalid url')
+        # else:
+        #     update.message.reply_text('Invalid url')
     except:
         update.message.reply_text('An error occured')
 
 
-token = os.environ['TELEGRAM_API_TOKEN']
+with open('config.json') as f:
+    data = json.load(f)
+
+
+token = data['TELEGRAM_API_TOKEN']
 if token:
     updater = Updater(token, use_context=True)
 
